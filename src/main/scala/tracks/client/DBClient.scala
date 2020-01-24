@@ -1,35 +1,45 @@
 package tracks.client
 
-import java.sql.{Connection, PreparedStatement}
+import java.sql.{Connection, DriverManager, PreparedStatement, ResultSet, Statement}
 
-abstract class DBClient {
+class DBClient extends App {
 
-  val statement: PreparedStatement
+  // Move to config
+  val JDBC_DRIVER = "org.h2.Driver"
+  val DB_URL = "djbc:h2:./test"
 
-  def createTable {
+  val USER = "sa"
+  val PASS = "sa"
 
-      statement.executeQuery(
-        "CREATE TABLE music.tracks " +
-          "type text NOT NULL, " +
-          "id text NOT NULL, " +
-          "urn text NOT NULL, " +
-          "titles json NULL, " +
-          "availability json NULL "
-        );
+
+  // Place in method
+  val conn: Connection = DriverManager.getConnection(DB_URL, USER, PASS)
+  val statement: PreparedStatement =
+
+  try {
+    Class.forName(JDBC_DRIVER)
+    val createTable: ResultSet = statement.executeQuery(createTableSql)
   }
 
-  def insertOrUpdateTrack(json: String) {
+  val createTableSql = """
+      |CREATE TABLE music.tracks IF NOT EXISTS
+      |type text NOT NULL,
+      |id text NOT NULL,
+      |urn text NOT NULL,
+      |titles json NULL,
+      |availability json NULL
+      |""".stripMargin
 
-    statement.executeQuery(
-      "INSERT INTO music.tracks " +
-      "(type, id, urn, titles, availability) " +
-      "VALUES (?, ?, ?, ?::JSON, ?::JSON) " +
-      "type = excluded.type, " +
-      "id = excluded.id, " +
-      "urn = excluded.urn, " +
-      "titles = excluded.titles, " +
-      "availability = excluded.availability "
-    );
-
+  def insertTrack(json: String): Unit = {
+    val insertTrackSql = """
+      |INSERT INTO music.tracks (type, id, urn, titles, availability)
+      |VALUES (?, ?, ?, ?::JSON, ?::JSON)
+      |type = excluded.type
+      |id = excluded.id
+      |urn = excluded.urn
+      |titles = excluded.titles
+      |availability = excluded.availability
+      |""".stripMargin
+    statement.executeQuery(insertTrackSql)
   }
 }
