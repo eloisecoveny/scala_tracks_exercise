@@ -6,20 +6,19 @@ class DBClient extends App {
 
   // Move to config
   val JDBC_DRIVER = "org.h2.Driver"
-  val DB_URL = "djbc:h2:./test"
+  val DB_URL = "jdbc:h2:./test"
 
   val USER = "sa"
   val PASS = "sa"
 
-
   // Place in method
   val conn: Connection = DriverManager.getConnection(DB_URL, USER, PASS)
-  val statement: PreparedStatement =
-
-  try {
-    Class.forName(JDBC_DRIVER)
-    val createTable: ResultSet = statement.executeQuery(createTableSql)
-  }
+//  val statement: PreparedStatement =
+//
+//  try {
+//    Class.forName(JDBC_DRIVER)
+//    val createTable: ResultSet = statement.executeQuery(createTableSql)
+//  }
 
   val createTableSql = """
       |CREATE TABLE music.tracks IF NOT EXISTS
@@ -40,6 +39,6 @@ class DBClient extends App {
       |titles = excluded.titles
       |availability = excluded.availability
       |""".stripMargin
-    statement.executeQuery(insertTrackSql)
+//    statement.executeQuery(insertTrackSql)
   }
 }

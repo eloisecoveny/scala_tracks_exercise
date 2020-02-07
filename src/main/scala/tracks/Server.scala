@@ -4,7 +4,6 @@ import akka.actor.ActorSystem
 import akka.http.scaladsl.Http
 import akka.stream.ActorMaterializer
 import tracks.api.Api
-import tracks.client.DBClient._
 
 import scala.concurrent.ExecutionContext
 import scala.util.{Failure, Success}
@@ -18,8 +17,6 @@ object Server extends App
   implicit val system: ActorSystem = ActorSystem("tracks")
   implicit val executor: ExecutionContext = system.dispatcher
   implicit val materializer: ActorMaterializer = ActorMaterializer()
-
-  val dbClient = DBClient
 
   val bindingFuture = Http().bindAndHandle(routes, host, port)
 
