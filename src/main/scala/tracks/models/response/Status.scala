@@ -1,3 +1,3 @@
-package tracks.domain.response
+package tracks.models.response
 
 case class Status(status: String)

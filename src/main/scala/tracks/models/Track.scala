@@ -1,4 +1,4 @@
-package tracks.domain
+package tracks.models
 
 case class Track(`type`: String,
                  id: String,
