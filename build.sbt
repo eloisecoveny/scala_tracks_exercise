@@ -12,6 +12,7 @@ libraryDependencies ++= Seq(
   "org.json4s" %% "json4s-jackson" % "3.6.7",
   "org.json4s" %% "json4s-ext" % "3.6.7",
   "de.heikoseeberger" %% "akka-http-json4s" % "1.27.0",
+  "com.h2database" % "h2" % "1.4.200",
   "org.scalatest" %% "scalatest" % "3.1.1" % Test,
   "org.mockito" % "mockito-core" % "3.3.3" % Test
 )
