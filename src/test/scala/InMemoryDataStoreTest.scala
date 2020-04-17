@@ -180,7 +180,7 @@ class InMemoryDataStoreTest extends FlatSpec with Matchers {
 
   it should "Not get a track by id if that track id does not exist in the data store" in {
     val testDataStore = new InMemoryDataStore
-    testDataStore.add(track1)
+    testDataStore.add(track1)"track"
     Await.result(testDataStore.getById(track3.id), Duration.Inf) should be (None)
   }
 

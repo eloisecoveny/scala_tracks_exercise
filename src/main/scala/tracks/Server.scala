@@ -12,7 +12,7 @@ object Server extends App
   with Api {
 
   val host = "localhost"
-  val port = 9000
+  val port = 8080
 
   implicit val system: ActorSystem = ActorSystem("tracks")
   implicit val executor: ExecutionContext = system.dispatcher
