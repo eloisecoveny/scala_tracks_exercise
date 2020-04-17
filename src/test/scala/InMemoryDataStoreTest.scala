@@ -178,4 +178,33 @@ class InMemoryDataStoreTest extends FlatSpec with Matchers {
     Await.result(testDataStore.get, Duration.Inf) should be (List.empty)
   }
 
+  it should "Not get a track by id if that track id does not exist in the data store" in {
+    val testDataStore = new InMemoryDataStore
+    testDataStore.add(track1)
+    Await.result(testDataStore.getById(track3.id), Duration.Inf) should be (None)
+  }
+
+  it should "Not add anything when trying add something with the same id that already exists" in {
+    val testDataStore = new InMemoryDataStore
+    testDataStore.add(track1)
+    testDataStore.add(track2)
+    Await.result(testDataStore.get, Duration.Inf) should have length 1
+  }
+
+  it should "Not remove a track that does not exist in the data store" in {
+    val testDataStore = new InMemoryDataStore
+    testDataStore.add(track1)
+    testDataStore.remove(track3.id)
+    Await.result(testDataStore.get, Duration.Inf) should have length 1
+  }
+
+  it should "Not update a track that does not exist in the data store" in {
+    val testDataStore = new InMemoryDataStore
+    testDataStore.add(track1)
+    testDataStore.update(track3.id, track3)
+    val results = Await.result(testDataStore.get, Duration.Inf)
+    results should have length 1
+    results should be (List(track1))
+  }
+
 }

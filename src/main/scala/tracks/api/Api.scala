@@ -12,9 +12,9 @@ trait Api {
 
   val routes =
   {
-    path("hello") {
+    path("status") {
       get {
-        complete("Hello, World!")
+        complete("OK")
       }
     } ~ path("tracks") {
       get {

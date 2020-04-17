@@ -22,4 +22,8 @@ class Tracks(data: DataStore) {
   def get: Future[List[Track]] = {
     data.get
   }
+
+  def getById(id: String): Future[Option[Track]] = {
+    data.getById(id)
+  }
 }
