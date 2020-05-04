@@ -1,5 +1,12 @@
 package tracks.datasource
 
+import scredis.Redis
+import tracks.models.Track
+import org.json4s._
+import org.json4s.jackson.Serialization.write
+
+import scala.concurrent.Future
+
 /*
 Available Redis Queries
 
@@ -21,5 +28,30 @@ Available Redis Queries
  */
 
 class RedisClient {
+
+  implicit val formats = DefaultFormats
+
+  val redis = Redis()
+  import redis.dispatcher
+//  redis.hGetAll("foo") onComplete {
+//    case Success(content) => println(content)
+//    case Failure(e) => e.printStackTrace()
+//  }
+
+  def length = redis.dbSize
+
+  def add(track: Track) = {
+    redis.exists(track.id).map(result => {
+      if (!result) {
+        val trackJson = write(track)
+        redis.set(track.id, trackJson)
+      }
+    })
+  }
+
+  def remove(id: String) = ???
+  def update(id: String, track: Track) = ???
+  def get: Future[List[Track]] = ???
+  def getById(id: String): Future[Option[Track]] = ???
 
 }

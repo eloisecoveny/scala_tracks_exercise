@@ -3,7 +3,7 @@ package tracks.api
 import akka.http.scaladsl.server.Directives._
 import org.json4s.{DefaultFormats, Formats, jackson}
 import de.heikoseeberger.akkahttpjson4s.Json4sSupport
-import tracks.datasource.InMemoryDataStore
+import tracks.datasource.{InMemoryDataStore, RedisClient}
 import tracks.models.Track
 
 trait Api extends Json4sSupport {
@@ -13,7 +13,7 @@ trait Api extends Json4sSupport {
   // DB Client
   // Datasource - insert & get methods
   // API (uses datasource to do business logic)
-  val dataStore = new InMemoryDataStore
+  val dataStore = new RedisClient
 
   implicit val serialization = jackson.Serialization
   implicit val formats: Formats = DefaultFormats

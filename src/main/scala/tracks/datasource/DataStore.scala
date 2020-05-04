@@ -6,7 +6,7 @@ import scala.concurrent.Future
 
 trait DataStore {
 
-  def length(): Int
+  def length(): Future[Long]
 
   def add(track: Track)
 

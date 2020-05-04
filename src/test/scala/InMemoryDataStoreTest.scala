@@ -97,7 +97,8 @@ class InMemoryDataStoreTest extends FlatSpec with Matchers {
     val testDataStore = new InMemoryDataStore
 
       testDataStore.add(track1)
-      testDataStore.length should be (1)
+      val result = Await.result(testDataStore.get, Duration.Inf)
+      result.length should be (1)
     }
 
   it should "Successfully delete a track from the data store" in {
@@ -105,7 +106,8 @@ class InMemoryDataStoreTest extends FlatSpec with Matchers {
 
     testDataStore.add(track1)
     testDataStore.remove(track1.id)
-    testDataStore.length should be (0)
+    val result = Await.result(testDataStore.get, Duration.Inf)
+    result.length should be (0)
   }
 
   it should "Successfully update a track in the data store" in {
@@ -138,15 +140,18 @@ class InMemoryDataStoreTest extends FlatSpec with Matchers {
   it should "Not remove anything when trying to remove a track that doesn't exist" in {
     val testDataStore = new InMemoryDataStore
     testDataStore.add(track1)
-    testDataStore.length should be (1)
+    val result1 = Await.result(testDataStore.get, Duration.Inf)
+    result1.length should be (1)
     testDataStore.remove("000000")
-    testDataStore.length should be (1)
+    val result2 = Await.result(testDataStore.get, Duration.Inf)
+    result2.length should be (1)
   }
 
   it should "Not get anything when trying to get by an id that doesn't exist" in {
     val testDataStore = new InMemoryDataStore
     testDataStore.add(track1)
-    testDataStore.length should be (1)
+    val result = Await.result(testDataStore.get, Duration.Inf)
+    result.length should be (1)
     Await.result(testDataStore.getById("000000"), Duration.Inf) should be (None)
   }
 
@@ -157,9 +162,10 @@ class InMemoryDataStoreTest extends FlatSpec with Matchers {
     testDataStore.add(track4)
     testDataStore.add(track5)
     testDataStore.add(track6)
-    testDataStore.length should be (5)
-    val results = Await.result(testDataStore.get, Duration.Inf)
-    results should have length (5)
+    val results1 = Await.result(testDataStore.get, Duration.Inf)
+    results1.length should be (5)
+    val results2 = Await.result(testDataStore.get, Duration.Inf)
+    results2 should have length (5)
   }
 
   it should "Be able to get a track by id when were are 5 tracks in the data store" in {
@@ -169,7 +175,8 @@ class InMemoryDataStoreTest extends FlatSpec with Matchers {
     testDataStore.add(track4)
     testDataStore.add(track5)
     testDataStore.add(track6)
-    testDataStore.length should be (5)
+    val result = Await.result(testDataStore.get, Duration.Inf)
+    result.length should be (5)
     Await.result(testDataStore.getById("000004"), Duration.Inf) should be (Some(track6))
   }
 
@@ -180,7 +187,7 @@ class InMemoryDataStoreTest extends FlatSpec with Matchers {
 
   it should "Not get a track by id if that track id does not exist in the data store" in {
     val testDataStore = new InMemoryDataStore
-    testDataStore.add(track1)"track"
+    testDataStore.add(track1)
     Await.result(testDataStore.getById(track3.id), Duration.Inf) should be (None)
   }
 

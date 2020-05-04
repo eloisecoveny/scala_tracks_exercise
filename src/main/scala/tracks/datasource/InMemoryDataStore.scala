@@ -11,7 +11,7 @@ class InMemoryDataStore extends DataStore {
 
   val datastore: mutable.ListBuffer[Track] = new ListBuffer[Track]
 
-  def length = datastore.length
+  def length = Future{datastore.length.toLong}
 
   def add(track: Track) = {
     if (!datastore.exists(inv => inv.id == track.id)) datastore += track
