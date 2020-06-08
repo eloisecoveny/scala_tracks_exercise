@@ -4,6 +4,7 @@ import scredis.Redis
 import tracks.models.Track
 import org.json4s._
 import org.json4s.jackson.Serialization.write
+import org.json4s.jackson.JsonMethods.parse
 
 import scala.concurrent.Future
 
@@ -32,11 +33,12 @@ class RedisClient {
   implicit val formats = DefaultFormats
 
   val redis = Redis()
+
   import redis.dispatcher
-//  redis.hGetAll("foo") onComplete {
-//    case Success(content) => println(content)
-//    case Failure(e) => e.printStackTrace()
-//  }
+  //  redis.hGetAll("foo") onComplete {
+  //    case Success(content) => println(content)
+  //    case Failure(e) => e.printStackTrace()
+  //  }
 
   def length = redis.dbSize
 
@@ -49,9 +51,25 @@ class RedisClient {
     })
   }
 
-  def remove(id: String) = ???
+  def remove(id: String) = {
+    redis.exists(id).map(result => {
+      if (result) redis.del(id)
+      else println(s"There is no track with id: $id")
+    })
+  }
+
   def update(id: String, track: Track) = ???
-  def get: Future[List[Track]] = ???
+
+  def get: Future[List[Track]] = {
+    val fKeys: Future[Set[String]] = redis.keys("*")
+    for {
+      keys <- fKeys
+      tracks <- redis.mGet(keys.mkString(" "))
+    } yield {
+      tracks.flatten.map(parse(_).extract[Track])
+    }
+  }
+
   def getById(id: String): Future[Option[Track]] = ???
 
 }
