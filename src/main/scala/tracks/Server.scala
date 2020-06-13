@@ -23,11 +23,4 @@ object Server extends App
     case Success(serverBinding) => println(s"listening to ${serverBinding.localAddress}")
     case Failure(error) => println(s"error: ${error.getMessage}")
   }
-
-  val redis = Redis()
-  import redis.dispatcher
-  redis.hGetAll("foo") onComplete {
-    case Success(content) => println(content)
-    case Failure(e) => e.printStackTrace()
-  }
 }

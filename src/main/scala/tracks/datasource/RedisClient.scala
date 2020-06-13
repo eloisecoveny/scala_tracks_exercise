@@ -35,10 +35,6 @@ class RedisClient {
   val redis = Redis()
 
   import redis.dispatcher
-  //  redis.hGetAll("foo") onComplete {
-  //    case Success(content) => println(content)
-  //    case Failure(e) => e.printStackTrace()
-  //  }
 
   def length = redis.dbSize
 
