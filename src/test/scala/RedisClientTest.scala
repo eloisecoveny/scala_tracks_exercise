@@ -4,7 +4,7 @@ import scredis.Redis
 import tracks.datasource.RedisClient
 import tracks.models.{Track, TrackAvailability, TrackTitles}
 
-import scala.concurrent.{Await, Future}
+import scala.concurrent.Await
 import scala.concurrent.duration.Duration
 import scala.util.Success
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -36,12 +36,9 @@ class RedisClientTest extends FlatSpec with Matchers with BeforeAndAfterEach {
     )))
 
   "Tracks" should "Successfully write a new track to the Redis data store" in {
-    testRedisDataStore
-      .add(track1)
-      .flatMap(_ => {
-        testRedisDataStore.get
-      })
-      .map((tracks: Seq[Track]) => tracks.length should be (0))
+    Await.result(testRedisDataStore.add(track1), Duration.Inf)
+    val result = Await.result(testRedisDataStore.get, Duration.Inf)
+    result.length should be (1)
   }
 
   it should "Successfully delete a track from the Redis data store" in {
