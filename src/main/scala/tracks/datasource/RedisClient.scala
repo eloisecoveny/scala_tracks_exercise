@@ -54,7 +54,14 @@ class RedisClient {
     })
   }
 
-  def update(id: String, track: Track) = ???
+  def update(id: String, track: Track) = {
+    redis.exists(id).map(result => {
+      if (result) {
+        redis.del(id)
+        add(track)
+      } else println(s"There is no track with id: $id")
+    })
+  }
 
   def get: Future[List[Track]] = {
     val fKeys: Future[Set[String]] = redis.keys("*")
@@ -66,6 +73,13 @@ class RedisClient {
     }
   }
 
-  def getById(id: String): Future[Option[Track]] = ???
+  def getById(id: String): Future[Option[Track]] = {
+    val fTrack = redis.get(id)
+      for {
+        track <- fTrack
+      } yield {
+      track.map(parse(_).extract[Track])
+    }
+  }
 
 }
