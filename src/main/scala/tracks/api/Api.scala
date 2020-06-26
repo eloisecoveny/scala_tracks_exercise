@@ -3,8 +3,7 @@ package tracks.api
 import akka.http.scaladsl.server.Directives._
 import org.json4s.{DefaultFormats, Formats, jackson}
 import de.heikoseeberger.akkahttpjson4s.Json4sSupport
-import tracks.datasource.{InMemoryDataStore, RedisClient}
-import tracks.domain.Tracks
+import tracks.datasource.RedisClient
 import tracks.models.Track
 
 trait Api extends Json4sSupport {

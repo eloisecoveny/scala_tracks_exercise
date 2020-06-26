@@ -3,7 +3,6 @@ package tracks
 import akka.actor.ActorSystem
 import akka.http.scaladsl.Http
 import akka.stream.ActorMaterializer
-import scredis.Redis
 import tracks.api.Api
 
 import scala.concurrent.ExecutionContext

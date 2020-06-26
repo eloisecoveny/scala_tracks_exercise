@@ -5,21 +5,24 @@ import tracks.datasource.RedisClient
 import tracks.models.{Track, TrackAvailability, TrackTitles}
 
 import scala.concurrent.Await
-import scala.concurrent.duration.Duration
-import scala.util.Success
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.duration._
 
 class RedisClientTest extends FlatSpec with Matchers with BeforeAndAfterEach {
 
   val testRedisDataStore = new TestRedisClient
 
   override def afterEach() = {
-      val beforeResult = Await.result(testRedisDataStore.length, Duration.Inf)
+    val result = for {
+      beforeResult <- testRedisDataStore.length
+      _ <- testRedisDataStore.deleteAll()
+      afterResult <- testRedisDataStore.length
+    } yield {
       println(s"Items in DB before deletion: $beforeResult")
-      Await.result(testRedisDataStore.deleteAll(), Duration.Inf)
-      val afterResult = Await.result(testRedisDataStore.length, Duration.Inf)
       println(s"Items in DB after deletion: $afterResult")
     }
+    Await.result(result, 10.seconds)
+  }
 
   val track1 = Track(
     "track",
@@ -50,35 +53,45 @@ class RedisClientTest extends FlatSpec with Matchers with BeforeAndAfterEach {
     )))
 
   "Tracks" should "Successfully write a new track to the Redis data store" in {
-    val result1 = Await.result(testRedisDataStore.get, Duration.Inf)
-    result1.length should be (0)
-    Await.result(testRedisDataStore.add(track1), Duration.Inf)
-    val result2 = Await.result(testRedisDataStore.get, Duration.Inf)
-    result2.length should be (1)
+    val result = for {
+      _ <- testRedisDataStore.add(track1)
+      tracks <- testRedisDataStore.get
+    } yield {
+      tracks.length shouldBe (1)
+    }
+    Await.result(result, 10.seconds)
   }
 
   it should "Successfully delete a track from the Redis data store" in {
-    val initialResult = Await.result(testRedisDataStore.get, Duration.Inf)
-    initialResult.length should be (0)
-    Await.result(testRedisDataStore.add(track1), Duration.Inf)
-    val midResult = Await.result(testRedisDataStore.get, Duration.Inf)
-    midResult.length should be (1)
-    Await.result(testRedisDataStore.remove(track1.id), Duration.Inf)
-    val result = Await.result(testRedisDataStore.get, Duration.Inf)
-    result.length should be (0)
+    val result = for {
+      _ <- testRedisDataStore.add(track1)
+      _ <- testRedisDataStore.remove(track1.id)
+      tracks <- testRedisDataStore.get
+    } yield {
+      tracks.length shouldBe 0
+    }
+    Await.result(result, 10.seconds)
   }
 
   it should "Successfully update a track in the Redis data store" in {
-    Await.result(testRedisDataStore.add(track1), Duration.Inf)
-    Await.result(testRedisDataStore.update(track2.id, track2), Duration.Inf)
-    val result = Await.result(testRedisDataStore.get, Duration.Inf)
-    result.map(track => track should be (Some(track2)))
+    val result = for {
+      _ <- testRedisDataStore.add(track1)
+      _ <- testRedisDataStore.update(track2.id, track2)
+      tracks <- testRedisDataStore.get
+    } yield {
+      tracks.map(track => track shouldBe Some(track2))
+    }
+    Await.result(result, 10.seconds)
   }
 
   it should "Successfully get a track by ID from the Redis data store" in {
-    Await.result(testRedisDataStore.add(track1), Duration.Inf)
-    val track = Await.result(testRedisDataStore.getById(track1.id), Duration.Inf)
-    track should be (Some(track1))
+    val result = for {
+      _ <- testRedisDataStore.add(track1)
+      track <- testRedisDataStore.getById(track1.id)
+    } yield {
+      track should be(Some(track1))
+    }
+    Await.result(result, 10.seconds)
   }
 }
 
