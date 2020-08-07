@@ -34,5 +34,6 @@ libraryDependencies ++= Seq(
 
 val framework = new TestFramework("com.waioeka.sbt.runner.CucumberFramework")
 testFrameworks += framework
-testOptions in Test += Tests.Argument(framework,"--glue","")
-parallelExecution in Test := true
+testOptions in Test += Tests.Argument(framework,"--glue","src/test/scala/StepDefinitions")
+testOptions in Test += Tests.Argument(framework,"--plugin","pretty")
+parallelExecution in Test := false

@@ -4,14 +4,21 @@ import cucumber.api.scala.{EN, ScalaDsl}
 import org.scalatest.matchers.should.Matchers
 
 class StepDefinitions extends ScalaDsl with EN with Matchers with CucumberTestSuite {
-  override def features = List(
-    "features/create-track.feature",
-    "features/delete-track.feature",
-    "features/get-track.feature",
-    "features/update-track.feature"
-  )
 
   val testDataStore = new TestRedisClient()
+
+  Given("""record with ID {string} is added to the store:"""){ (arg1: String, arg0: String) =>
+    //// Write code here that turns the phrase above into concrete actions
+    throw new PendingException()
+  }
+  Then("""the response should match json:"""){ (arg0: String) =>
+    //// Write code here that turns the phrase above into concrete actions
+    throw new PendingException()
+  }
+  Given("""I add a new test {string}"""){ (arg0: String) =>
+    //// Write code here that turns the phrase above into concrete actions
+    throw new PendingException()
+  }
 
   When("""I send {string} request to {string}""") { (int: Int) =>
     //Write code here
